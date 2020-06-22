@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="style.css">
+	<title>Car</title>
+</head>
+<body>
+	<div class="container pt-5" id='app'>
+		<div class="row mb-3">
+			<div class="col">
+				<h1>cars application</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group">
+					<label for="search">Find your car</label>
+					<input 
+						type="text"
+					    class="form-control"
+					    id="search" 
+					    placeholder="Name, model..."
+					    v-model="search"
+					> 
+				</div>
+
+				<hr>
+
+				<ul class="list-group">
+					<li 
+						v-for="(car, index) in filterCars"
+						class="list-group-item list-group-item-action pointer"
+						v-on:click="selectCar(index)"
+						:class="{'active': selectIndex === index}"
+						>
+
+						{{ car.name }} {{ car.model }}
+					</li>
+				</ul>
+			</div>
+
+			<div class="col-md-8 pt-3">
+				<div class="row">
+					<div class="col-md-5">
+						<h2>{{ car.name }}</h2>
+						<img 
+							:src="car.image" v-bind:alt="car.name" class="rounded datiled-car-image">
+					</div>
+
+					<div class="col-md-7 pt-2">
+
+						<h5>car details</h5>
+
+						<ul>
+							<li>Model - <strong>{{car.model}}</strong></li>
+							<li>Year - <strong>{{car.year}}</strong></li>
+							<li>Owner - <strong>{{car.owner}}</strong></li>
+						</ul>
+
+						<div class="phone-block">
+							<transition name="phoneAnimation">
+								<p v-if="phoneVisibility">{{car.phone}}</p>
+							</transition>	
+						</div>
+						
+
+						<button class="btn btn-outline-success mr-3"
+						 	v-on:click="phoneVisibility = !phoneVisibility"
+						 	v-text="changePhoneBtnText"
+						 	>
+						 </button>
+						<button class="btn btn-primary" v-on:click="modalVisibility = true">BUY</button>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row pt-3" v-if="logs.length != 0">
+			<div class="col-md-12">
+				<ul class="list-group">
+					<li class="list-group-item"
+						v-for="log in logs"
+						:class="{
+							'list-group-item-secondary': log.type == 'cnl',
+							'list-group-item-success': log.type == 'ok'
+						}"
+					>{{log.text}}  <br>Date: {{log.date | date}}
+					</li>
+				</ul>
+			</div>
+		</div>
+	
+		<transition name="modalAnimation">
+			<div class="modal fade show" v-if="modalVisibility" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Do you want buy this car?</h5>
+							<button 
+								type="button"
+								class="close" 
+								v-on:click="modalVisibility = false" 
+								data-dismiss="modal" 
+								aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<p><strong>{{ car.name }}</strong></p>
+							<ul>
+								<li>Model - <strong>{{car.model}}</strong></li>
+								<li>Year - <strong>{{car.year}}</strong></li>
+								<li>Owner - <strong>{{car.owner}}</strong></li>
+							</ul>
+						</div>
+						<div class="modal-footer">
+							<button 
+								type="button" 
+								class="btn btn-primary"
+								v-on:click="newOrder"
+								>Buy
+							</button>
+							<button 
+								type="button" 
+								class="btn btn-secondary" 
+								data-dismiss="modal"
+								v-on:click="cancelOrder"
+								>Cancel
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>			
+		</transition>
+		<transition name="fade">
+			<div class="modal-backdrop fade show" v-if="modalVisibility"></div>
+		</transition>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+	<script src="js.js"></script>
+</body>
+</html>
+
